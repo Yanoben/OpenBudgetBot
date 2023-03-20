@@ -1,8 +1,8 @@
 import config
 import logging
-from aiogram.types import ReplyKeyboardRemove, \
-    ReplyKeyboardMarkup, KeyboardButton, \
-    InlineKeyboardMarkup, InlineKeyboardButton
+# from aiogram.types import ReplyKeyboardRemove, \
+#     ReplyKeyboardMarkup, KeyboardButton, \
+    # InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Bot, Dispatcher, executor, types
 from aiogram.types.message import ContentType
 
@@ -12,37 +12,62 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.TOKEN)
 dp = Dispatcher(bot)
 
-vote = KeyboardButton('✅ Ovoz berish')
-balance = KeyboardButton('💰 Hisobim')
-top = KeyboardButton('🏆 TOP 10')
+vote = '✅ Ovoz berish'
+balance = '💰 Hisobim'
+top = '🏆 TOP 10'
 
-greet_kb = ReplyKeyboardMarkup(
-    resize_keyboard=True).add(vote).add(balance).add(top)
 
 
 hello_text = """Assalomu alaykum!
 
-Aziz foydalanuvchi siz oʻz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
+Aziz foydalanuvchi siz oʼz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
 Unutmang sizning ovozingiz bizning mahallamizni obodonlashtirish uchun juda muhim!"""
 
 
-@dp.message_handler(commands=['start'])
-async def process_start_command(message: types.Message):
-    await message.reply(hello_text, reply_markup=greet_kb)
+@dp.message_handler(commands=["start"])
+async def cmd_start(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=vote),
+            types.KeyboardButton(text=balance),
+            types.KeyboardButton(text=top),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True,
+        # input_field_placeholder="Выберите способ подачи"
+    )
+    await message.answer(hello_text, reply_markup=keyboard)
 
 
-@dp.message_handler(commands=['vote'])
-async def process_vote_command(message: types.Message):
-    await message.reply("Первое - изменяем размер клавиатуры", reply_markup=greet_kb1)
-
-@dp.message_handler(commands=['balance'])
-async def process_balance_command(message: types.Message):
-    await message.reply("Первое - изменяем размер клавиатуры", reply_markup=greet_kb2)
+@dp.message_handler(lambda message: message.text == vote)
+async def with_puree(message: types.Message):
+    await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
+    await message.reply('''Ovoz berish uchun telefon raqam kiriting.
+                           Namuna: +998991234567''')
 
 
-@dp.message_handler(commands=['top'])
-async def process_top_command(message: types.Message):
-    await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:", reply_markup=greet_kb)
+@dp.message_handler(lambda message: message.text == balance)
+async def without_puree(message: types.Message):
+    await message.reply('''Hozirgi balansingiz: 0 so'm''')
+
+
+@dp.message_handler(lambda message: message.text == top)
+async def without_puree(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=vote),
+            types.KeyboardButton(text=balance),
+            types.KeyboardButton(text=top),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True,
+        # input_field_placeholder="Выберите способ подачи"
+    )
+    await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:")
 
 # # buy
 # @dp.message_handler(commands=['buy'])
