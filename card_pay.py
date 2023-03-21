@@ -101,7 +101,10 @@ async def top_but(message: types.Message):
     await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:",
                         reply_markup=keyboard)
 
-# # buy
+
+if __name__ == "__main__":
+    executor.start_polling(dp, skip_updates=False)
+
 # @dp.message_handler(commands=['buy'])
 # async def buy(message: types.Message):
 #     if config.PAYMENTS_TOKEN.split(':')[1] == 'TEST':
@@ -119,14 +122,10 @@ async def top_but(message: types.Message):
 #                            prices=[PRICE],
 #                            start_parameter="one-month-subscription",
 #                            payload="test-invoice-payload")
- 
- 
 # # pre checkout  (must be answered in 10 seconds)
 # @dp.pre_checkout_query_handler(lambda query: True)
 # async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
 #     await bot.answer_pre_checkout_query(pre_checkout_q.id, ok=True)
- 
- 
 # # successful payment
 # @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
 # async def successful_payment(message: types.Message):
@@ -137,8 +136,3 @@ async def top_but(message: types.Message):
 
 #     await bot.send_message(message.chat.id,
 #                            f"Платёж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно!!!")
-
-
-# run long-polling
-if __name__ == "__main__":
-    executor.start_polling(dp, skip_updates=False)
