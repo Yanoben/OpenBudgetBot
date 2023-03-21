@@ -44,8 +44,7 @@ async def cmd_start(message: types.Message):
 @dp.message_handler(lambda message: message.text == vote)
 async def with_puree(message: types.Message):
     await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
-    await message.reply('''Ovoz berish uchun telefon raqam kiriting.
-                           Namuna: +998991234567''')
+    await message.reply('''Ovoz berish uchun telefon raqam kiriting.\nNamuna: +998991234567''')
 
 
 @dp.message_handler(lambda message: message.text == balance)
