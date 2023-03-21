@@ -2,9 +2,8 @@ import config
 import logging
 # from aiogram.types import ReplyKeyboardRemove, \
 #     ReplyKeyboardMarkup, KeyboardButton, \
-    # InlineKeyboardMarkup, InlineKeyboardButton
+# InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Bot, Dispatcher, executor, types
-from aiogram.types.message import ContentType
 
 
 logging.basicConfig(level=logging.INFO)
@@ -15,8 +14,8 @@ dp = Dispatcher(bot)
 vote = '✅ Ovoz berish'
 balance = '💰 Hisobim'
 top = '🏆 TOP 10'
-
-
+check_mon = '📥 Pulni yechib olish'
+home = '🏠 Bosh sahifa'
 
 hello_text = """Assalomu alaykum!
 
@@ -36,24 +35,12 @@ async def cmd_start(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=kb,
         resize_keyboard=True,
-        # input_field_placeholder="Выберите способ подачи"
     )
     await message.answer(hello_text, reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == vote)
-async def with_puree(message: types.Message):
-    await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
-    await message.reply('''Ovoz berish uchun telefon raqam kiriting.\nNamuna: +998991234567''')
-
-
-@dp.message_handler(lambda message: message.text == balance)
-async def without_puree(message: types.Message):
-    await message.reply('''Hozirgi balansingiz: 0 so'm''')
-
-
-@dp.message_handler(lambda message: message.text == top)
-async def without_puree(message: types.Message):
+@dp.message_handler(lambda message: message.text == home)
+async def home_but(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=vote),
@@ -64,9 +51,58 @@ async def without_puree(message: types.Message):
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=kb,
         resize_keyboard=True,
-        # input_field_placeholder="Выберите способ подачи"
     )
-    await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:")
+    await message.answer(home, reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == vote)
+async def vote_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=vote),
+            types.KeyboardButton(text=balance)
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
+    await message.reply('''Ovoz berish uchun telefon raqam kiriting.\nNamuna: +998991234567''',
+                        reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == balance)
+async def balance_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=check_mon),
+            types.KeyboardButton(text=home)
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    await message.reply('''Hozirgi balansingiz: 0 so'm''',
+                        reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == top)
+async def top_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=vote),
+            types.KeyboardButton(text=balance),
+            types.KeyboardButton(text=top),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:",
+                        reply_markup=keyboard)
 
 # # buy
 # @dp.message_handler(commands=['buy'])
