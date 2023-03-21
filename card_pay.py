@@ -1,8 +1,5 @@
 import config
 import logging
-# from aiogram.types import ReplyKeyboardRemove, \
-#     ReplyKeyboardMarkup, KeyboardButton, \
-# InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram import Bot, Dispatcher, executor, types
 
 
@@ -11,13 +8,13 @@ logging.basicConfig(level=logging.INFO)
 bot = Bot(token=config.TOKEN)
 dp = Dispatcher(bot)
 
-vote = '✅ Ovoz berish'
-balance = '💰 Hisobim'
-top = '🏆 TOP 10'
-check_mon = '📥 Pulni yechib olish'
-home = '🏠 Bosh sahifa'
+VOTE = '✅ Ovoz berish'
+BALANCE = '💰 Hisobim'
+TOP = '🏆 TOP 10'
+CHECK_MON = '📥 Pulni yechib olish'
+HOME = '🏠 Bosh sahifa'
 
-hello_text = """Assalomu alaykum!
+HELLO_TEXT = """Assalomu alaykum!
 
 Aziz foydalanuvchi siz oʼz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
 Unutmang sizning ovozingiz bizning mahallamizni obodonlashtirish uchun juda muhim!"""
@@ -27,40 +24,40 @@ Unutmang sizning ovozingiz bizning mahallamizni obodonlashtirish uchun juda muhi
 async def cmd_start(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=vote),
-            types.KeyboardButton(text=balance),
-            types.KeyboardButton(text=top),
+            types.KeyboardButton(text=VOTE),
+            types.KeyboardButton(text=BALANCE),
+            types.KeyboardButton(text=TOP),
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=kb,
         resize_keyboard=True,
     )
-    await message.answer(hello_text, reply_markup=keyboard)
+    await message.answer(HELLO_TEXT, reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == home)
+@dp.message_handler(lambda message: message.text == HOME)
 async def home_but(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=vote),
-            types.KeyboardButton(text=balance),
-            types.KeyboardButton(text=top),
+            types.KeyboardButton(text=VOTE),
+            types.KeyboardButton(text=BALANCE),
+            types.KeyboardButton(text=TOP),
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
         keyboard=kb,
         resize_keyboard=True,
     )
-    await message.answer(home, reply_markup=keyboard)
+    await message.answer(HOME, reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == vote)
+@dp.message_handler(lambda message: message.text == VOTE)
 async def vote_but(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=vote),
-            types.KeyboardButton(text=balance)
+            types.KeyboardButton(text=VOTE),
+            types.KeyboardButton(text=BALANCE)
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
@@ -72,12 +69,12 @@ async def vote_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == balance)
+@dp.message_handler(lambda message: message.text == BALANCE)
 async def balance_but(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=check_mon),
-            types.KeyboardButton(text=home)
+            types.KeyboardButton(text=CHECK_MON),
+            types.KeyboardButton(text=HOME)
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
@@ -88,13 +85,13 @@ async def balance_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == top)
+@dp.message_handler(lambda message: message.text == TOP)
 async def top_but(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=vote),
-            types.KeyboardButton(text=balance),
-            types.KeyboardButton(text=top),
+            types.KeyboardButton(text=VOTE),
+            types.KeyboardButton(text=BALANCE),
+            types.KeyboardButton(text=TOP),
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
@@ -108,8 +105,7 @@ async def top_but(message: types.Message):
 # @dp.message_handler(commands=['buy'])
 # async def buy(message: types.Message):
 #     if config.PAYMENTS_TOKEN.split(':')[1] == 'TEST':
-#         await bot.send_message(message.chat.id, "Тестовый платеж!!!")
- 
+#         await bot.send_message(message.chat.id, "Тестовый платеж!!!") 
 #     await bot.send_invoice(message.chat.id,
 #                            title="Подписка на бота",
 #                            description="Активация подписки на бота на 1 месяц",
