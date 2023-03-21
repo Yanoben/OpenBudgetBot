@@ -14,6 +14,10 @@ TOP = '🏆 TOP 10'
 CHECK_MON = '📥 Pulni yechib olish'
 HOME = '🏠 Bosh sahifa'
 
+TEL = '📞 TELEFONGA'
+PLASTIC = '💳 PLASTIKGA (HUMO, UZCARD)'
+BACK = '🔙 ORTGA'
+
 HELLO_TEXT = """Assalomu alaykum!
 
 Aziz foydalanuvchi siz oʼz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
@@ -69,7 +73,8 @@ async def vote_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == BALANCE)
+@dp.message_handler(
+    lambda message: message.text == BALANCE or message.text == BACK)
 async def balance_but(message: types.Message):
     kb = [
         [
@@ -99,6 +104,23 @@ async def top_but(message: types.Message):
         resize_keyboard=True
     )
     await message.reply("🏆 TOP 10 eng ko'p ovoz berganlar:",
+                        reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == CHECK_MON)
+async def top_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=TEL),
+            types.KeyboardButton(text=PLASTIC),
+            types.KeyboardButton(text=BACK),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    await message.reply("Sizga qulay to'lov turini tanlang.",
                         reply_markup=keyboard)
 
 
