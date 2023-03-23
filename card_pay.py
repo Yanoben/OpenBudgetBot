@@ -9,19 +9,39 @@ bot = Bot(token=config.TOKEN)
 dp = Dispatcher(bot)
 
 VOTE = '✅ Ovoz berish'
+VOTE1 = '✅ Ovoz berdim!'
 BALANCE = '💰 Hisobim'
 TOP = '🏆 TOP 10'
 CHECK_MON = '📥 Pulni yechib olish'
 HOME = '🏠 Bosh sahifa'
 
+PAYNET = '2114616411'
+CLICK = '1807098590'
+
 TEL = '📞 TELEFONGA'
 PLASTIC = '💳 PLASTIKGA (HUMO, UZCARD)'
 BACK = '🔙 ORTGA'
+BACK1 = '🔙 ORTGA-'
 
 HELLO_TEXT = """Assalomu alaykum!
 
 Aziz foydalanuvchi siz oʼz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
 Unutmang sizning ovozingiz bizning mahallamizni obodonlashtirish uchun juda muhim!"""
+
+# LINK = 'https://openbudget.uz/boards-list/1/a5c12dea-03b8-4301-ad27-01d18c1a8023'
+LINK = '''Openbudjet loyihasida maktabimiz o'quvchilar soni ko'pligi va ularni 1 smenali ish tartibida o'qishi uchun qo'shimcha bino qurilishi tashabbusi kiritilgan. 
+Shu ssilka orqali ovoz bering va kelajak avlodimiz taqdiriga befarq bo'lmanglar deb iltimos qilib qolamiz. 
+
+https://openbudget.uz/boards-list/1/a5c12dea-03b8-4301-ad27-01d18c1a8023
+
+OVOZ BERISH TARTIBI
+1⃣ Tepadagi 👆ko'k rangli yozib ustiga bosing.⏭
+2⃣Sahifa to'liq ochilgandan so'ng pastroqqa tushib "Овоз бериш" tugmasining ustiga bosing⏭
+3⃣So'ralgan joyga mobil raqamingizni kiriting hamda pastidagi oson matematik hisobni to'g'ri javobini yozing va sizga kelgan 6 xonali kodni kiriting⏭
+4⃣So'ng  "Oвозингиз муваффакиятли кабул килинди" yozuvi chiqsa siz shunday muborak kunlarda maktab qurishdek ulkan ishga ehson qilish hissangizni qo'shgan bo'lasiz !!!
+
+HURMAT BILAN ANDIJON TUMANI 6-MAKTAB JAMOASI !!!'''
+balance = 0
 
 
 @dp.message_handler(commands=["start"])
@@ -58,9 +78,10 @@ async def home_but(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == VOTE)
 async def vote_but(message: types.Message):
+    #TODO ending vote func
     kb = [
         [
-            types.KeyboardButton(text=VOTE),
+            types.KeyboardButton(text=VOTE1),
             types.KeyboardButton(text=BALANCE)
         ],
     ]
@@ -69,8 +90,23 @@ async def vote_but(message: types.Message):
         resize_keyboard=True
     )
     await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
-    await message.reply('''Ovoz berish uchun telefon raqam kiriting.\nNamuna: +998991234567''',
-                        reply_markup=keyboard)
+    await message.reply(LINK, reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == VOTE1)
+async def vote_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=VOTE1),
+            types.KeyboardButton(text=BALANCE)
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    await message.reply('''Iltimos to'gri ovor berganingizni tekshiring!''')
+    await message.reply(LINK, reply_markup=keyboard)
 
 
 @dp.message_handler(
@@ -86,8 +122,8 @@ async def balance_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
-    await message.reply('''Hozirgi balansingiz: 0 so'm''',
-                        reply_markup=keyboard)
+    text = 'Hozirgi balansingiz: '+balance+'''so'm'''
+    await message.reply(text, reply_markup=keyboard)
 
 
 @dp.message_handler(lambda message: message.text == TOP)
@@ -107,8 +143,9 @@ async def top_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == CHECK_MON)
-async def top_but(message: types.Message):
+@dp.message_handler(
+    lambda message: message.text == CHECK_MON or message.text == BACK1)
+async def check_but(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=TEL),
@@ -124,37 +161,41 @@ async def top_but(message: types.Message):
                         reply_markup=keyboard)
 
 
+@dp.message_handler(lambda message: message.text == TEL)
+async def tel_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=HOME),
+            types.KeyboardButton(text=BACK1),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    # text = 'Paynet 2000 sum\nTel:'
+    # await bot.send_message(PAYNET, text)
+    await message.reply("5 Daqiqa ichida ushbu telefon no'meringizga paynet qilinadi!",
+                        reply_markup=keyboard)
+
+
+@dp.message_handler(lambda message: message.text == PLASTIC)
+async def plastic_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=HOME),
+            types.KeyboardButton(text=BACK1),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    # text = 'Click 2000 sum\nNomer:'
+    # await bot.send_message(CLICK, text)
+    await message.reply("5 Daqiqa ichida ushbu Click no'meringizga pul suriladi!",
+                        reply_markup=keyboard)
+
+
 if __name__ == "__main__":
     executor.start_polling(dp, skip_updates=False)
-
-# @dp.message_handler(commands=['buy'])
-# async def buy(message: types.Message):
-#     if config.PAYMENTS_TOKEN.split(':')[1] == 'TEST':
-#         await bot.send_message(message.chat.id, "Тестовый платеж!!!") 
-#     await bot.send_invoice(message.chat.id,
-#                            title="Подписка на бота",
-#                            description="Активация подписки на бота на 1 месяц",
-#                            provider_token=config.PAYMENTS_TOKEN,
-#                            currency="rub",
-#                            photo_url="https://www.aroged.com/wp-content/uploads/2022/06/Telegram-has-a-premium-subscription.jpg",
-#                            photo_width=416,
-#                            photo_height=234,
-#                            photo_size=416,
-#                            is_flexible=False,
-#                            prices=[PRICE],
-#                            start_parameter="one-month-subscription",
-#                            payload="test-invoice-payload")
-# # pre checkout  (must be answered in 10 seconds)
-# @dp.pre_checkout_query_handler(lambda query: True)
-# async def pre_checkout_query(pre_checkout_q: types.PreCheckoutQuery):
-#     await bot.answer_pre_checkout_query(pre_checkout_q.id, ok=True)
-# # successful payment
-# @dp.message_handler(content_types=ContentType.SUCCESSFUL_PAYMENT)
-# async def successful_payment(message: types.Message):
-#     print("SUCCESSFUL PAYMENT:")
-#     payment_info = message.successful_payment.to_python()
-#     for k, v in payment_info.items():
-#         print(f"{k} = {v}")
-
-#     await bot.send_message(message.chat.id,
-#                            f"Платёж на сумму {message.successful_payment.total_amount // 100} {message.successful_payment.currency} прошел успешно!!!")
