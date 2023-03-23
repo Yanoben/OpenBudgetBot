@@ -143,24 +143,6 @@ async def top_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(
-    lambda message: message.text == CHECK_MON or message.text == BACK1)
-async def check_but(message: types.Message):
-    kb = [
-        [
-            types.KeyboardButton(text=TEL),
-            types.KeyboardButton(text=PLASTIC),
-            types.KeyboardButton(text=BACK),
-        ],
-    ]
-    keyboard = types.ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True
-    )
-    await message.reply("Sizga qulay to'lov turini tanlang.",
-                        reply_markup=keyboard)
-
-
 @dp.message_handler(lambda message: message.text == TEL)
 async def tel_but(message: types.Message):
     kb = [
@@ -194,6 +176,28 @@ async def plastic_but(message: types.Message):
     # text = 'Click 2000 sum\nNomer:'
     # await bot.send_message(CLICK, text)
     await message.reply("5 Daqiqa ichida ushbu Click no'meringizga pul suriladi!",
+                        reply_markup=keyboard)
+
+
+@dp.message_handler(
+    lambda message: message.text == CHECK_MON or message.text == BACK1)
+async def check_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=TEL),
+            types.KeyboardButton(text=PLASTIC),
+            types.KeyboardButton(text=BACK),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    text = '''Telefonga pul yechib olish uchun hisobingizda 1000 so'mdan ko'p pul bo'lishi kerak!\n
+    Hozirgi balansingiz: 0 so'm'''
+    if balance < 1000:
+        await message.reply(text, reply_markup=keyboard)
+    await message.reply("Sizga qulay to'lov turini tanlang.",
                         reply_markup=keyboard)
 
 
