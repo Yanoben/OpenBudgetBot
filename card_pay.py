@@ -3,6 +3,7 @@ import logging
 from aiogram import Bot, Dispatcher, executor, types
 import requests
 from bs4 import BeautifulSoup
+import time
 
 
 logging.basicConfig(level=logging.INFO)
@@ -152,19 +153,38 @@ async def tel_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
-    # text = 'Paynet 2000 sum\nTel:'
-    # await bot.send_message(PAYNET, text)
-    await message.reply("5 Daqiqa ichida ushbu telefon no'meringizga paynet qilinadi!",
-                        reply_markup=keyboard)
+    await message.reply('Iltimos paynet qilinadigon telefon raqamini kiriting')
+    time.sleep(15)
 
 
-@dp.message_handler(
-    lambda message: message.text == CHECK_MON or message.text == BACK1)
-async def check_but(message: types.Message):
+# @dp.message_handler(
+#     lambda message: message.text == CHECK_MON or message.text == BACK1)
+# async def check_but(message: types.Message):
+#     kb = [
+#         [
+#             types.KeyboardButton(text=TEL),
+#             # types.KeyboardButton(text=PLASTIC),
+#             types.KeyboardButton(text=BACK),
+#         ],
+#     ]
+#     keyboard = types.ReplyKeyboardMarkup(
+#         keyboard=kb,
+#         resize_keyboard=True
+#     )
+#     print(balance)
+#     text = '''Telefonga pul yechib olish uchun hisobingizda 1000 so'mdan ko'p pul bo'lishi kerak!\nHozirgi balansingiz: 0 so'm'''
+#     if balance < 1000:
+#         await message.reply(text, reply_markup=keyboard)
+#     else:
+#         await message.reply("Sizga qulay to'lov turini tanlang.",
+#                         reply_markup=keyboard)
+
+
+@dp.message_handler(content_types=['text'])
+async def tel_but(message: types.Message):
     kb = [
         [
-            types.KeyboardButton(text=TEL),
-            # types.KeyboardButton(text=PLASTIC),
+            types.KeyboardButton(text=HOME),
             types.KeyboardButton(text=BACK),
         ],
     ]
@@ -172,12 +192,10 @@ async def check_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
-    print(balance)
-    text = '''Telefonga pul yechib olish uchun hisobingizda 1000 so'mdan ko'p pul bo'lishi kerak!\nHozirgi balansingiz: 0 so'm'''
-    if balance < 1000:
-        await message.reply(text, reply_markup=keyboard)
-    else:
-        await message.reply("Sizga qulay to'lov turini tanlang.",
+    text = f'''Paynet 2000 so'm\nTel: {message.text}'''
+    await bot.send_message(PAYNET, text)
+    if message.text.startswith('+998'):
+        await message.reply("5 Daqiqa ichida ushbu telefon no'meringizga paynet qilinadi!",
                         reply_markup=keyboard)
 
 
