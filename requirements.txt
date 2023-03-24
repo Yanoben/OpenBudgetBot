@@ -1,3 +1,6 @@
 logging
 config
 aiogram
+requests
+bs4
+lxml

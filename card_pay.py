@@ -1,6 +1,8 @@
 import config
 import logging
 from aiogram import Bot, Dispatcher, executor, types
+import requests
+from bs4 import BeautifulSoup
 
 
 logging.basicConfig(level=logging.INFO)
@@ -28,11 +30,7 @@ HELLO_TEXT = """Assalomu alaykum!
 Aziz foydalanuvchi siz oʼz ovozingizni berish orqali botdan 2000 so'm paynet sohibi boʼlishiz mumkin.
 Unutmang sizning ovozingiz bizning mahallamizni obodonlashtirish uchun juda muhim!"""
 
-# LINK = 'https://openbudget.uz/boards-list/1/a5c12dea-03b8-4301-ad27-01d18c1a8023'
-LINK = '''Openbudjet loyihasida maktabimiz o'quvchilar soni ko'pligi va ularni 1 smenali ish tartibida o'qishi uchun qo'shimcha bino qurilishi tashabbusi kiritilgan. 
-Shu ssilka orqali ovoz bering va kelajak avlodimiz taqdiriga befarq bo'lmanglar deb iltimos qilib qolamiz. 
-
-https://openbudget.uz/boards-list/1/a5c12dea-03b8-4301-ad27-01d18c1a8023
+LINK = '''https://openbudget.uz/boards-list/1/a5c12dea-03b8-4301-ad27-01d18c1a8023
 
 OVOZ BERISH TARTIBI
 1⃣ Tepadagi 👆ko'k rangli yozib ustiga bosing.⏭
@@ -40,8 +38,24 @@ OVOZ BERISH TARTIBI
 3⃣So'ralgan joyga mobil raqamingizni kiriting hamda pastidagi oson matematik hisobni to'g'ri javobini yozing va sizga kelgan 6 xonali kodni kiriting⏭
 4⃣So'ng  "Oвозингиз муваффакиятли кабул килинди" yozuvi chiqsa siz shunday muborak kunlarda maktab qurishdek ulkan ishga ehson qilish hissangizni qo'shgan bo'lasiz !!!
 
-HURMAT BILAN ANDIJON TUMANI 6-MAKTAB JAMOASI !!!'''
-balance = 0
+HURMAT BILAN ANDIJON TUMANI 6-MAKTAB JAMOASI !!!
+Agar hammasini tog'ri bajargan bo'lsangiz '✅ Ovoz berdim!' tugmasini bosing'''
+
+
+@dp.message_handler(lambda message: message.text == VOTE1)
+async def vote_but(message: types.Message):
+    kb = [
+        [
+            types.KeyboardButton(text=TEL),
+            types.KeyboardButton(text=HOME),
+        ],
+    ]
+    keyboard = types.ReplyKeyboardMarkup(
+        keyboard=kb,
+        resize_keyboard=True
+    )
+    text = '''Bergan ovozingiz uchun rahmat!\nSizga qulay to'lov turini tanlang.'''
+    await message.reply(text, reply_markup=keyboard)
 
 
 @dp.message_handler(commands=["start"])
@@ -49,7 +63,7 @@ async def cmd_start(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=VOTE),
-            types.KeyboardButton(text=BALANCE),
+            # types.KeyboardButton(text=BALANCE),
             types.KeyboardButton(text=TOP),
         ],
     ]
@@ -60,12 +74,12 @@ async def cmd_start(message: types.Message):
     await message.answer(HELLO_TEXT, reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == HOME)
+@dp.message_handler(lambda message: message.text == HOME or message.text == BACK)
 async def home_but(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=VOTE),
-            types.KeyboardButton(text=BALANCE),
+            # types.KeyboardButton(text=BALANCE),
             types.KeyboardButton(text=TOP),
         ],
     ]
@@ -78,11 +92,10 @@ async def home_but(message: types.Message):
 
 @dp.message_handler(lambda message: message.text == VOTE)
 async def vote_but(message: types.Message):
-    #TODO ending vote func
     kb = [
         [
             types.KeyboardButton(text=VOTE1),
-            types.KeyboardButton(text=BALANCE)
+            types.KeyboardButton(text=BACK)
         ],
     ]
     keyboard = types.ReplyKeyboardMarkup(
@@ -93,37 +106,21 @@ async def vote_but(message: types.Message):
     await message.reply(LINK, reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == VOTE1)
-async def vote_but(message: types.Message):
-    kb = [
-        [
-            types.KeyboardButton(text=VOTE1),
-            types.KeyboardButton(text=BALANCE)
-        ],
-    ]
-    keyboard = types.ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True
-    )
-    await message.reply('''Iltimos to'gri ovor berganingizni tekshiring!''')
-    await message.reply(LINK, reply_markup=keyboard)
-
-
-@dp.message_handler(
-    lambda message: message.text == BALANCE or message.text == BACK)
-async def balance_but(message: types.Message):
-    kb = [
-        [
-            types.KeyboardButton(text=CHECK_MON),
-            types.KeyboardButton(text=HOME)
-        ],
-    ]
-    keyboard = types.ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True
-    )
-    text = 'Hozirgi balansingiz: '+balance+'''so'm'''
-    await message.reply(text, reply_markup=keyboard)
+# @dp.message_handler(
+#     lambda message: message.text == BALANCE or message.text == BACK)
+# async def balance_but(message: types.Message):
+#     kb = [
+#         [
+#             types.KeyboardButton(text=CHECK_MON),
+#             types.KeyboardButton(text=HOME)
+#         ],
+#     ]
+#     keyboard = types.ReplyKeyboardMarkup(
+#         keyboard=kb,
+#         resize_keyboard=True
+#     )
+#     text = f'''Hozirgi balansingiz: {balance}so'm'''
+#     await message.reply(text, reply_markup=keyboard)
 
 
 @dp.message_handler(lambda message: message.text == TOP)
@@ -131,7 +128,7 @@ async def top_but(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=VOTE),
-            types.KeyboardButton(text=BALANCE),
+            # types.KeyboardButton(text=BALANCE),
             types.KeyboardButton(text=TOP),
         ],
     ]
@@ -161,31 +158,13 @@ async def tel_but(message: types.Message):
                         reply_markup=keyboard)
 
 
-@dp.message_handler(lambda message: message.text == PLASTIC)
-async def plastic_but(message: types.Message):
-    kb = [
-        [
-            types.KeyboardButton(text=HOME),
-            types.KeyboardButton(text=BACK1),
-        ],
-    ]
-    keyboard = types.ReplyKeyboardMarkup(
-        keyboard=kb,
-        resize_keyboard=True
-    )
-    # text = 'Click 2000 sum\nNomer:'
-    # await bot.send_message(CLICK, text)
-    await message.reply("5 Daqiqa ichida ushbu Click no'meringizga pul suriladi!",
-                        reply_markup=keyboard)
-
-
 @dp.message_handler(
     lambda message: message.text == CHECK_MON or message.text == BACK1)
 async def check_but(message: types.Message):
     kb = [
         [
             types.KeyboardButton(text=TEL),
-            types.KeyboardButton(text=PLASTIC),
+            # types.KeyboardButton(text=PLASTIC),
             types.KeyboardButton(text=BACK),
         ],
     ]
@@ -193,11 +172,12 @@ async def check_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
-    text = '''Telefonga pul yechib olish uchun hisobingizda 1000 so'mdan ko'p pul bo'lishi kerak!\n
-    Hozirgi balansingiz: 0 so'm'''
+    print(balance)
+    text = '''Telefonga pul yechib olish uchun hisobingizda 1000 so'mdan ko'p pul bo'lishi kerak!\nHozirgi balansingiz: 0 so'm'''
     if balance < 1000:
         await message.reply(text, reply_markup=keyboard)
-    await message.reply("Sizga qulay to'lov turini tanlang.",
+    else:
+        await message.reply("Sizga qulay to'lov turini tanlang.",
                         reply_markup=keyboard)
 
 
