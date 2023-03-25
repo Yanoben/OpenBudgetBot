@@ -7,9 +7,11 @@ import time
 
 
 logging.basicConfig(level=logging.INFO)
+PROXY_URL = "http://proxy.server:3128"
 
-bot = Bot(token=config.TOKEN)
+bot = Bot(token=config.TOKEN, proxy=PROXY_URL)
 dp = Dispatcher(bot)
+
 
 VOTE = '✅ Ovoz berish'
 VOTE1 = '✅ Ovoz berdim!'
@@ -20,6 +22,7 @@ HOME = '🏠 Bosh sahifa'
 
 PAYNET = '2114616411'
 CLICK = '1807098590'
+#CLICK = '642033390'
 
 TEL = '📞 TELEFONGA'
 PLASTIC = '💳 PLASTIKGA (HUMO, UZCARD)'
@@ -55,6 +58,7 @@ async def vote_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
+    logging.info('Voted')
     text = '''Bergan ovozingiz uchun rahmat!\nSizga qulay to'lov turini tanlang.'''
     await message.reply(text, reply_markup=keyboard)
 
@@ -72,6 +76,7 @@ async def cmd_start(message: types.Message):
         keyboard=kb,
         resize_keyboard=True,
     )
+    logging.info('Start bot')
     await message.answer(HELLO_TEXT, reply_markup=keyboard)
 
 
@@ -103,6 +108,7 @@ async def vote_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
+    logging.info('Voting')
     await message.reply('''Har bir ovozingiz uchun hisobingizga 2000 so'm qo'shiladi.''')
     await message.reply(LINK, reply_markup=keyboard)
 
@@ -153,8 +159,7 @@ async def tel_but(message: types.Message):
         keyboard=kb,
         resize_keyboard=True
     )
-    await message.reply('Iltimos paynet qilinadigon telefon raqamini kiriting')
-    time.sleep(15)
+    await message.reply('Iltimos paynet qilinadigon telefon raqamini +998901234567 ushbu tarzda kiriting')
 
 
 # @dp.message_handler(
@@ -193,10 +198,16 @@ async def tel_but(message: types.Message):
         resize_keyboard=True
     )
     text = f'''Paynet 2000 so'm\nTel: {message.text}'''
-    await bot.send_message(PAYNET, text)
-    if message.text.startswith('+998'):
+    logging.info(f'Vote tel: {message.text}')
+    if message.text.startswith('+998') and len(message.text) == 13:
         await message.reply("5 Daqiqa ichida ushbu telefon no'meringizga paynet qilinadi!",
                         reply_markup=keyboard)
+        await bot.send_message(CLICK, text)
+    elif message.text.startswith('9') or len(message.text) < 13:
+        await message.reply('''Iltimos telefon raqamini tog'ri kiritkaningizga amin bo'ling va qaytadan kiriting!''',
+                            reply_markup=keyboard)
+    else:
+        await message.reply('''Kechirasiz ushbu bot savollarga javob bera olmaydi.\nIltimos savollar uchun adminga murojat qiling!''')
 
 
 if __name__ == "__main__":
